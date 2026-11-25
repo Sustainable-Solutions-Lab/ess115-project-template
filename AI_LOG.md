@@ -14,6 +14,52 @@ When your group starts its own project, replace this file with a copy of `AI_LOG
 
 ---
 
+### 2026-11-24 · Phase 5 · who: S. Davis (instructor) · version: v0.2
+
+**Kind of change:** aesthetic (hero photo, centered charts, charts that hold still) and substantive (why parts of the map are blank, the title of the first map, the claim that readers can tap for values)
+
+**Tool:** Claude (Anthropic), in Claude Code
+
+**What was asked:** "I'd like to have a hero image at the top, in this case one from my stock of fire photos in Dropbox should work well. The one with the bay bridge in red sky would be good. Figures should be centered on the page and if colors or lines appear on the figure as the user scrolls it ought not to jittery. As it is now the addition of entries in the legend cause the California map to jump around. The title of the first map is confusing because no colors are visible until scrolling, so 'benefits minus one-time cost' is not true. The reason that the Central Valley and desert are excluded is that they are not at risk of wildfire, not a lack of data. Captions all say hover for values, but at least on my phone. I can't seem to get any values to come up when I tap or hover over the map. instead of 'for each place, let's say 'in each location.'"
+
+**What it gave us:**
+
+- A photo behind the headline (`images/hero.jpg`), set by four `hero` lines at the top of `story.md` so any story can have one. The photo is a cropped, reduced copy of a licensed stock photo; the credit under it was read from the original file's metadata.
+- Charts centered on the page. The text steps now pass down the left margin on wide screens and over the chart on narrow ones.
+- Charts that do not move. The page sets aside room for the longest title, legend and note of any step, and gives the chart one size for the whole section. This is built into the page, so it applies to every story made from the template.
+- A first map step with its own title ("Where wildfire can burn") and no claim about values. The net-benefit title appears with the colors.
+- New wording for the study area in the story, the legend and `METHODS.md`.
+- Tapping a chart on a touch screen now shows the value. The first version only worked with a mouse.
+- "For each place" is now "In each location."
+- `compare.html`, which shows any two versions side by side, with frozen copies in `versions/`. [Compare v0.1 and v0.2](compare.html).
+
+**How it was checked:**
+
+- By the AI, in a headless browser, at desktop, tablet and phone widths, in light and dark mode: the position and size of the map were measured at every one of the seven steps and are identical to the pixel at each width; the center of every chart is the center of the page; the page has no errors and does not scroll sideways.
+- By the AI, with a simulated touch screen: a tap on the map and a tap on the bar chart each bring up the value, and a tap elsewhere removes it.
+- By the AI, against the preprint: the study describes its area as the places where the probability of burning is greater than zero, which matches the instructor's correction.
+- By the AI: the original photo file is unchanged (same checksum before and after).
+- By a person: not yet. The instructor has not yet seen v0.2, and nobody has tried the tap on a real phone.
+
+**What we kept, changed or threw out, and why:**
+
+- **Corrected an error the AI made, and a person caught.** v0.1 said the blank parts of the map "are not in the data." The AI had inferred that from the empty cells in the grid without checking why they were empty. The instructor, who knows the study, supplied the real reason: the Central Valley and the desert are not at risk of wildfire, so the study does not include them. An empty cell can mean "not measured" or "not applicable," and the data alone do not say which. This is the kind of error to watch for in your own project.
+- Changed the legend label from "Land included in the study" to "Land at risk of wildfire."
+- Kept the promise that readers can tap for values, because it now works in testing, and took it off the first map step, where no values are shown.
+- Kept every number. No statistic changed in this version.
+
+**Not yet checked:**
+
+- Whether the tap works on the instructor's own phone. A simulated touch screen is not a real one.
+- The right to publish the photo. It is a Reuters photo licensed through Alamy. The license the instructor bought may not cover a public repository or student copies of it. Replace the photo or confirm the license before this repository is made public.
+- Still open from v0.1: which cutoff for the best tenth is current, $198,000 or $220,000 per km². The study's lead author should say.
+- Still open from v0.1: the split at 38°N is our choice of line, not the preprint's.
+- Still open from v0.1: nobody has compared the coarse map (cells about 5 km across) with the full-resolution one by eye.
+- Still open from v0.1: the study's lead author has not yet seen the story, and nobody has read it line by line against the preprint.
+- Still open from v0.1: the preprint is in review, so its numbers may change.
+
+---
+
 ### 2026-11-24 · Process · who: S. Davis (instructor) · version: v0.1 (no change to the story)
 
 **Kind of change:** process

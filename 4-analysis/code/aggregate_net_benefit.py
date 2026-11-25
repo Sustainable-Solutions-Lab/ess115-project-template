@@ -102,7 +102,7 @@ with open(OUT / "net_benefit_by_latitude.csv", "w", newline="") as f:
 north = la >= SPLIT_LAT
 pos = v > 0
 stats = [
-    ("analyzed_area_km2", round(total_area), "km2", "Area of all grid cells with a value"),
+    ("analyzed_area_km2", round(total_area), "km2", "Area of the study area: all grid cells with a chance of burning"),
     ("share_area_positive", round(float(w[pos].sum() / total_area), 3), "fraction", "Area where benefits exceed costs"),
     ("top10_area_km2", round(w[top].sum()), "km2", "Area of the best tenth"),
     ("top10_threshold_k_per_km2", round(float(v[top].min()), 1), "$k/km2", "Lowest net benefit inside the best tenth"),

@@ -1,0 +1,416 @@
+/* =====================================================================
+   EarthSys 115 scrollytelling design system
+   Layout: a full-width headline, a reading column of ~38rem, and
+   scrolly sections where a sticky chart sits beside (desktop) or
+   behind (phone) short text steps.
+   Change colors and type here, in one place. Charts read these same
+   tokens, so they follow automatically (see "token:" in charts/*.json).
+   ===================================================================== */
+
+:root {
+  /* ---- Color (light) ---- */
+  --bg:          #ffffff;   /* page */
+  --surface:     #fcfcfb;   /* chart panel */
+  --ink:         #0b0b0b;   /* headlines, body text */
+  --ink-2:       #52514e;   /* secondary text, captions */
+  --muted:       #898781;   /* axis labels, context marks */
+  --context:     #c9c7bf;   /* bars that are not the point of this step */
+  --grid:        #e8e7e1;   /* hairline gridlines */
+  --rule:        #d6d4cc;   /* dividers, axis baseline */
+  --accent:      #d9541e;   /* the one thing to look at (fire orange) */
+  --accent-2:    #2a78d6;   /* a second series when you need one (blue) */
+
+  /* Two-sided scale for maps and charts of gains and losses.
+     Blue = positive, orange = negative, pale = near zero. */
+  --pos:         #3f86dc;
+  --pos-low:     #b7d3f6;
+  --pos-mid:     #5598e7;
+  --pos-high:    #184f95;
+  --neg:         #e08a57;
+  --neg-low:     #f3c9ad;
+  --neg-high:    #b94a16;
+  --pos-text:    #1c5cab;   /* blue and orange dark enough for words */
+  --pos-high-text: #184f95;
+  --neg-text:    #b94a16;
+  --step-bg:     rgba(255, 255, 255, 0.94);
+  --link:        #1c5cab;
+  --on-image:    #ffffff;   /* text on top of a photo */
+  --on-image-2:  rgba(255, 255, 255, 0.88);
+
+  /* ---- Type ---- */
+  --font-display: "Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+  --font-body:    "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-data:    "Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+
+  /* Type scale (1.25 ratio), fluid at the top end */
+  --t-xs:   0.8rem;
+  --t-sm:   0.9rem;
+  --t-base: 1.0625rem;
+  --t-lg:   1.3rem;
+  --t-xl:   clamp(1.6rem, 1.2rem + 1.6vw, 2.2rem);
+  --t-hero: clamp(2.2rem, 1.4rem + 3.6vw, 3.9rem);
+
+  /* ---- Spacing (4px base) ---- */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-6: 1.5rem;
+  --s-8: 2rem;
+  --s-12: 3rem;
+  --s-16: 4rem;
+
+  --measure: 38rem;     /* reading column width (~65 characters) */
+  --wide: 68rem;        /* headline and scrolly sections */
+  --graphic: 42rem;     /* charts: centered on the page at this width */
+  --radius: 4px;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:       #111110;
+    --surface:  #1a1a19;
+    --ink:      #f0efec;
+    --ink-2:    #c3c2b7;
+    --muted:    #94928b;
+    --context:  #4a4945;
+    --grid:     #2c2c2a;
+    --rule:     #383835;
+    --accent:   #e0602a;
+    --accent-2: #3987e5;
+    --pos:      #3987e5;
+    --pos-low:  #1d4372;
+    --pos-mid:  #3987e5;
+    --pos-high: #b7d3f6;
+    --neg:      #c9622e;
+    --neg-low:  #6a3619;
+    --neg-high: #f39a68;
+    --pos-text: #86b6ef;
+    --pos-high-text: #b7d3f6;
+    --neg-text: #f39a68;
+    --step-bg:  rgba(26, 26, 25, 0.94);
+    --link:     #86b6ef;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:       #111110;
+  --surface:  #1a1a19;
+  --ink:      #f0efec;
+  --ink-2:    #c3c2b7;
+  --muted:    #94928b;
+  --context:  #4a4945;
+  --grid:     #2c2c2a;
+  --rule:     #383835;
+  --accent:   #e0602a;
+  --accent-2: #3987e5;
+    --pos:      #3987e5;
+    --pos-low:  #1d4372;
+    --pos-mid:  #3987e5;
+    --pos-high: #b7d3f6;
+    --neg:      #c9622e;
+    --neg-low:  #6a3619;
+    --neg-high: #f39a68;
+    --pos-text: #86b6ef;
+    --pos-high-text: #b7d3f6;
+    --neg-text: #f39a68;
+  --step-bg:  rgba(26, 26, 25, 0.94);
+  --link:     #86b6ef;
+  color-scheme: dark;
+}
+
+/* ---- Base ---- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--t-base);
+  line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--link); text-underline-offset: 0.15em; }
+a:focus-visible, button:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.loading { font-family: var(--font-display); color: var(--muted); text-align: center; padding-block: var(--s-16); }
+
+/* ---- Headline block ---- */
+.hero {
+  max-width: var(--wide);
+  margin: 0 auto;
+  padding-block: var(--s-16) var(--s-8);
+  border-bottom: 1px solid var(--rule);
+}
+/* Headline over a photo (set "hero:" at the top of story.md).
+   The text sits on a dark shade, so it reads the same in light and dark mode. */
+.hero.has-image {
+  position: relative;
+  max-width: none;
+  margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  padding: 0;
+  border-bottom: 0;
+  min-height: clamp(26rem, 74vh, 46rem);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: #2b1709;
+}
+.hero.has-image img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.hero.has-image .hero-shade {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.62) 38%, rgba(0, 0, 0, 0) 78%);
+}
+.hero.has-image .hero-text {
+  position: relative;
+  width: 100%;
+  max-width: calc(var(--wide) + 2 * max(16px, env(safe-area-inset-left, 0px)));
+  margin: 0 auto;
+  padding: var(--s-16) max(16px, env(safe-area-inset-left, 0px)) var(--s-8);
+}
+.hero.has-image .kicker,
+.hero.has-image h1,
+.hero.has-image .byline strong { color: var(--on-image); }
+.hero.has-image .dek,
+.hero.has-image .byline { color: var(--on-image-2); }
+.hero.has-image h1, .hero.has-image .dek { text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45); }
+.hero-credit {
+  max-width: var(--wide);
+  margin: var(--s-2) auto 0;
+  font-family: var(--font-display);
+  font-size: var(--t-xs);
+  color: var(--muted);
+  text-align: right;
+}
+
+.kicker {
+  font-family: var(--font-display);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 var(--s-3);
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--t-hero);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--s-4);
+  max-width: 22ch;
+  text-wrap: balance;
+}
+.dek {
+  font-size: var(--t-lg);
+  line-height: 1.45;
+  color: var(--ink-2);
+  max-width: var(--measure);
+  margin: 0 0 var(--s-6);
+}
+.byline {
+  font-family: var(--font-display);
+  font-size: var(--t-sm);
+  color: var(--ink-2);
+  margin: 0;
+}
+.byline strong { color: var(--ink); font-weight: 600; }
+
+/* ---- Reading column ---- */
+.prose {
+  max-width: var(--measure);
+  margin: var(--s-12) auto;
+}
+.prose p { margin: 0 0 var(--s-4); }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; }
+.figure .caption p { margin: 0 0 var(--s-2); }
+.prose h2 {
+  font-family: var(--font-display);
+  font-size: var(--t-xl);
+  line-height: 1.15;
+  margin: var(--s-8) 0 var(--s-4);
+  text-wrap: balance;
+}
+
+/* ---- Chart panel (shared by scrolly and full-width charts) ---- */
+.chart-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--t-base);
+  line-height: 1.3;
+  margin: 0 0 var(--s-1);
+}
+.chart-subtitle {
+  font-family: var(--font-display);
+  font-size: var(--t-sm);
+  color: var(--ink-2);
+  margin: 0 0 var(--s-3);
+}
+.legend {
+  list-style: none; margin: 0 0 var(--s-3); padding: 0;
+  display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4);
+  font-family: var(--font-display); font-size: var(--t-xs); color: var(--ink-2);
+}
+.legend li { display: flex; align-items: center; gap: var(--s-2); }
+.legend .swatch { width: 0.8rem; height: 0.8rem; border-radius: 2px; flex: none; }
+/* The script reserves the height of these so charts never jump between steps.
+   flow-root keeps the last line's margin inside the measured box. */
+.chart-head { display: flow-root; }
+.chart-head, .chart-note { box-sizing: border-box; }
+.chart-box, .chart-box.vega-embed { display: block; width: 100%; min-width: 0; margin-inline: auto; }
+.chart-box canvas, .chart-box svg { display: block; max-width: 100%; margin-inline: auto; }
+.chart-box summary { display: none; } /* hide the export menu */
+.chart-box svg text { paint-order: stroke; } /* text labels get a halo in the panel color */
+.chart-note {
+  font-family: var(--font-display);
+  font-size: var(--t-xs);
+  color: var(--muted);
+  margin: var(--s-2) 0 0;
+}
+
+/* ---- Full-width chart ---- */
+.figure {
+  max-width: var(--graphic);
+  margin: var(--s-12) auto;
+  padding: var(--s-6);
+  background: var(--surface);
+  border-top: 2px solid var(--ink);
+}
+.figure .caption {
+  font-size: var(--t-sm);
+  color: var(--ink-2);
+  max-width: var(--measure);
+  margin: var(--s-3) 0 0;
+}
+
+/* Data table under a chart */
+details.data-table { margin-top: var(--s-4); font-family: var(--font-data); font-size: var(--t-sm); }
+details.data-table summary { cursor: pointer; color: var(--ink-2); }
+.table-scroll { overflow-x: auto; max-height: 22rem; overflow-y: auto; margin-top: var(--s-2); }
+.table-scroll table { border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.table-scroll th, .table-scroll td { padding: var(--s-1) var(--s-4) var(--s-1) 0; text-align: right; border-bottom: 1px solid var(--grid); }
+.table-scroll td.txt { text-align: left; }
+.table-scroll th { position: sticky; top: 0; background: var(--surface); color: var(--ink-2); font-weight: 600; }
+
+/* ---- Scrolly section ----
+   The chart is centered on the page and stays put. Text cards scroll past it:
+   down the left margin on wide screens, over the chart on narrow ones. */
+.scrolly {
+  max-width: var(--wide);
+  margin: var(--s-12) auto;
+  position: relative;
+}
+.scrolly .graphic {
+  position: sticky;
+  top: var(--s-4); /* the script centers it vertically once it knows the height */
+  z-index: 1;
+  max-width: var(--graphic);
+  margin-inline: auto;
+  background: var(--surface);
+  border-top: 2px solid var(--ink);
+  padding: var(--s-6);
+  min-width: 0;
+}
+.scrolly .steps {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;       /* let taps and hovers reach the chart underneath */
+  padding-block: 35vh 45vh;
+  min-width: 0;
+}
+.step {
+  pointer-events: auto;
+  width: min(15.5rem, 100%);
+  margin: 0 0 75vh;
+  padding: var(--s-4) var(--s-4) var(--s-4) var(--s-6);
+  background: var(--step-bg);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--rule);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  color: var(--ink);
+  transition: border-color 200ms ease;
+}
+.step:last-child { margin-bottom: 0; }
+.step p { margin: 0 0 var(--s-3); }
+.step p:last-child { margin-bottom: 0; }
+.step.is-active { border-left-color: var(--accent); }
+
+/* Not wide enough for a margin: cards pass over the middle of the chart */
+@media (max-width: 1099px) {
+  .step { width: min(24rem, 100%); margin-inline: auto; }
+}
+
+/* Highlighted words inside step text: write ==like this== in story.md */
+mark.hl {
+  background: none;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Phone and narrow tablet: the chart sticks to the top of the screen */
+@media (max-width: 760px) {
+  .scrolly .graphic {
+    top: env(safe-area-inset-top, 0px);
+    max-width: none;
+    margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+    padding: var(--s-4) max(16px, env(safe-area-inset-left, 0px));
+  }
+  .scrolly .steps { padding-block: 30vh 30vh; }
+  .step { width: 100%; margin-bottom: 85vh; }
+  .figure { padding: var(--s-4); margin-inline: calc(-1 * var(--s-2)); }
+  .hero.has-image { min-height: clamp(24rem, 80vh, 40rem); }
+}
+
+/* ---- Sources and methods footer ---- */
+.sources {
+  max-width: var(--measure);
+  margin: var(--s-16) auto var(--s-12);
+  padding-top: var(--s-6);
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-display);
+  font-size: var(--t-sm);
+  color: var(--ink-2);
+  line-height: 1.55;
+}
+.sources h2 {
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: var(--s-6) 0 var(--s-2);
+}
+.sources h2:first-child { margin-top: 0; }
+.sources p, .sources li { margin: 0 0 var(--s-2); }
+.sources ul { padding-left: 1.1rem; margin: 0; }
+
+/* ---- Error box (shown when story.md or a chart has a mistake) ---- */
+.error {
+  max-width: var(--measure);
+  margin: var(--s-8) auto;
+  padding: var(--s-4) var(--s-6);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  font-family: var(--font-display);
+  font-size: var(--t-sm);
+  background: var(--surface);
+}
+.error strong { display: block; margin-bottom: var(--s-1); }
+.chart-box .error { margin: 0; }
+.error p { margin: 0; }
+.error code { font-size: 0.95em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .step { transition: none; }
+}

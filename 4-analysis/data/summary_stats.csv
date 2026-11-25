@@ -1,5 +1,5 @@
 stat,value,unit,what_it_is
-analyzed_area_km2,287003,km2,Area of all grid cells with a value
+analyzed_area_km2,287003,km2,Area of the study area: all grid cells with a chance of burning
 share_area_positive,0.604,fraction,Area where benefits exceed costs
 top10_area_km2,28700,km2,Area of the best tenth
 top10_threshold_k_per_km2,197.6,$k/km2,Lowest net benefit inside the best tenth

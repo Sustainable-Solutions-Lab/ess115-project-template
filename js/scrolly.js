@@ -302,7 +302,28 @@
       (list.length ? "It understands: " + list.join(", ") + "." : "That chart has no settings."));
   }
 
-  function draw(box, name, params) {
+  // Work out the size of a chart's box. The size depends only on the page
+  // width and the chart file, never on the step, so nothing moves when a
+  // step changes what the chart shows.
+  function boxSize(box, raw, fixedH) {
+    var meta = raw.usermeta || {};
+    var narrow = window.innerWidth <= 760;
+    box.style.maxWidth = ""; box.style.height = "";
+    var avail = box.clientWidth, w, h;
+    if (meta.aspect) {
+      // Fixed shape (maps): height = width x aspect, shrunk to fit the screen.
+      var maxH = fixedH || window.innerHeight * (narrow ? 0.36 : 0.66);
+      w = avail; h = w * meta.aspect;
+      if (h > maxH) { h = maxH; w = h / meta.aspect; }
+    } else {
+      w = avail;
+      h = fixedH || (typeof raw.height === "number" ? raw.height : 340);
+      if (!fixedH && narrow) h = Math.min(h * 0.72, window.innerHeight * 0.3);
+    }
+    return { w: Math.floor(w), h: Math.floor(h) };
+  }
+
+  function draw(box, name, params, fixedH) {
     return getSpec(name).then(function (raw) {
       var meta = raw.usermeta || {};
       var spec = resolveTokens(JSON.parse(JSON.stringify(raw)));
@@ -310,28 +331,43 @@
       Object.keys(params || {}).forEach(function (k) { if (!(k in known)) throw unknownParam(k, name, known); });
       (spec.params || []).forEach(function (p) { if (params && p.name in params) p.value = params[p.name]; });
 
-      var narrow = window.innerWidth <= 760;
-      var avail = box.clientWidth;
-      box.style.maxWidth = "";
-      if (meta.aspect) {
-        // Fixed shape (maps): height = width x aspect, shrunk to fit the screen.
-        var maxH = window.innerHeight * (narrow ? 0.4 : 0.7);
-        var w = avail, h = w * meta.aspect;
-        if (h > maxH) { h = maxH; w = h / meta.aspect; }
-        spec.width = Math.floor(w); spec.height = Math.floor(h);
-        spec.autosize = { type: "none" };
-        spec.padding = 0;
-        box.style.maxWidth = Math.floor(w) + "px";
-      } else {
-        if (spec.width == null) spec.width = "container";
-        if (typeof spec.height === "number" && narrow)
-          spec.height = Math.round(Math.min(spec.height * 0.72, window.innerHeight * 0.3));
-        if (spec.height == null) spec.height = narrow ? 240 : 340;
-      }
+      var size = boxSize(box, raw, fixedH);
+      spec.width = size.w; spec.height = size.h;
       var cfg = chartTheme();
-      if (meta.aspect) cfg.padding = 0;
-      return vegaEmbed(box, spec, { actions: false, renderer: meta.renderer || "svg", config: cfg })
-        .then(function (res) { return res.view; });
+      if (meta.aspect) {
+        spec.autosize = { type: "none" }; spec.padding = 0; cfg.padding = 0;
+      } else {
+        // "fit" keeps the whole chart, axes included, inside the box.
+        spec.autosize = { type: "fit", contains: "padding" };
+      }
+      box.style.height = (fixedH ? Math.floor(fixedH) : size.h) + "px";
+      var dark = getComputedStyle(document.documentElement).colorScheme.indexOf("dark") >= 0;
+      return vegaEmbed(box, spec, {
+        actions: false, renderer: meta.renderer || "svg", config: cfg,
+        tooltip: { theme: dark ? "dark" : "light" }
+      }).then(function (res) { enableTouch(res.view, box); return res.view; });
+    });
+  }
+
+  // Phones: a tap shows the value under the finger, and a tap elsewhere hides it.
+  // (Vega shows a tooltip while a pointer is over a mark. A finger leaves the
+  // screen as soon as it taps, so the tooltip would vanish at once. After a tap
+  // we tell the chart the pointer is still there.)
+  function enableTouch(view, box) {
+    var target = box.querySelector("canvas, svg");
+    if (!target || !window.PointerEvent) return;
+    target.addEventListener("pointerup", function (ev) {
+      if (ev.pointerType === "mouse") return;
+      var x = ev.clientX, y = ev.clientY;
+      setTimeout(function () {
+        var hit = document.elementFromPoint(x, y) || target;
+        if (!box.contains(hit)) hit = target;
+        hit.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, clientX: x, clientY: y, pointerType: "touch", view: window }));
+      }, 40);
+    });
+    document.addEventListener("pointerdown", function (ev) {
+      if (ev.pointerType === "mouse" || box.contains(ev.target)) return;
+      target.dispatchEvent(new PointerEvent("pointerout", { bubbles: true, pointerType: "touch", view: window }));
     });
   }
 
@@ -376,12 +412,23 @@
 
   function buildHero(meta) {
     var h = el("header", "hero");
-    h.innerHTML =
+    var text =
       (meta.kicker ? '<p class="kicker">' + inline(meta.kicker) + "</p>" : "") +
       "<h1>" + inline(meta.title || "Untitled story") + "</h1>" +
       (meta.dek ? '<p class="dek">' + inline(meta.dek) + "</p>" : "") +
-      (meta.byline ? '<p class="byline">' + inline(meta.byline) + (meta.date ? " · " + esc(meta.date) : "") + "</p>" : "");
-    root.appendChild(h);
+      (meta.byline ? '<p class="byline">' + inline(meta.byline) + (meta.date ? " \u00b7 " + esc(meta.date) : "") + "</p>" : "");
+    if (meta.hero) {
+      // A photo behind the headline. Settings: hero, hero_alt, hero_credit, hero_focus.
+      h.className = "hero has-image";
+      h.innerHTML = '<img src="' + esc(meta.hero) + '" alt="' + esc(meta.hero_alt || "") + '"' +
+        ' style="object-position:' + esc(meta.hero_focus || "50% 40%") + '">' +
+        '<div class="hero-shade"></div><div class="hero-text">' + text + "</div>";
+      root.appendChild(h);
+      root.appendChild(el("p", "hero-credit", inline(meta.hero_credit || "Photo credit: to be confirmed")));
+    } else {
+      h.innerHTML = text;
+      root.appendChild(h);
+    }
     if (meta.title) document.title = meta.title.replace(/[*=`]/g, "");
   }
 
@@ -433,15 +480,41 @@
     sec.appendChild(graphic); sec.appendChild(steps);
     root.appendChild(sec);
 
+    var rec = { box: box, chart: null, params: {}, view: null, fixedH: 0 };
+    liveCharts.push(rec);
+    var busy = Promise.resolve();
+
+    // Reserve room for the tallest title, legend and note of any step, and give
+    // the chart one height for the whole section. After this, nothing in the
+    // panel moves when a step changes the words or the chart.
+    function reserve() {
+      var keepHead = head.innerHTML, keepNote = note.innerHTML;
+      head.style.minHeight = ""; note.style.minHeight = "";
+      var hMax = 0, nMax = 0;
+      b.steps.forEach(function (st, k) {
+        var s = stepState(k);
+        head.innerHTML = chartHead(s.title, s.subtitle, s.legend);
+        note.innerHTML = inline(s.note) || "&nbsp;";
+        hMax = Math.max(hMax, Math.ceil(head.getBoundingClientRect().height));
+        nMax = Math.max(nMax, Math.ceil(note.getBoundingClientRect().height));
+      });
+      head.innerHTML = keepHead; note.innerHTML = keepNote;
+      head.style.minHeight = hMax + "px"; note.style.minHeight = nMax + "px";
+    }
     // Keep the sticky chart centered on tall screens and fully visible on short ones.
     function place() {
       if (window.innerWidth <= 760) { graphic.style.top = ""; return; }
       graphic.style.top = Math.max(12, Math.round((window.innerHeight - graphic.offsetHeight) / 2)) + "px";
     }
-
-    var rec = { box: box, chart: null, params: {}, view: null, after: place };
-    liveCharts.push(rec);
-    var busy = Promise.resolve();
+    function layout() {
+      reserve();
+      return getSpec(b.chart).then(function (raw) {
+        rec.fixedH = boxSize(box, raw, 0).h;
+        box.style.height = rec.fixedH + "px";
+        place();
+      });
+    }
+    rec.layout = layout;
 
     function stepState(k) {
       var st = b.steps[k] || {};
@@ -464,8 +537,8 @@
         rec.chart = s.chart; rec.params = s.params;
         if (same) return update(rec.view, s.chart, s.params);
         if (rec.view) { rec.view.finalize(); rec.view = null; }
-        return draw(box, s.chart, s.params).then(function (v) { rec.view = v; });
-      }).then(place).catch(function (e) {
+        return draw(box, s.chart, s.params, rec.fixedH).then(function (v) { rec.view = v; });
+      }).catch(function (e) {
         if (rec.view) { rec.view.finalize(); rec.view = null; }
         rec.chart = null;
         chartError("step " + (k + 1) + " of the section that uses \"" + b.chart + "\"", e, box);
@@ -480,7 +553,15 @@
       stepEls.forEach(function (s, j) { s.classList.toggle("is-active", j === k); });
       go(k);
     }
+    busy = layout().catch(function () {});
     activate(0); // draw the first state right away so the page is complete at rest
+    // Web fonts change how text wraps, so measure again whenever one arrives.
+    function remeasure() { reserve(); place(); }
+    if (document.fonts) {
+      if (document.fonts.ready) document.fonts.ready.then(remeasure);
+      if (document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", remeasure);
+    }
+    window.addEventListener("load", remeasure);
 
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) { if (en.isIntersecting) activate(+en.target.dataset.index); });
@@ -513,8 +594,10 @@
   function redrawAll() {
     liveCharts.forEach(function (rec) {
       if (!rec.chart) return;
-      if (rec.view) rec.view.finalize();
-      draw(rec.box, rec.chart, rec.params).then(function (v) { rec.view = v; if (rec.after) rec.after(); }).catch(function () {});
+      if (rec.view) { rec.view.finalize(); rec.view = null; }
+      var ready = rec.layout ? rec.layout() : Promise.resolve();
+      ready.then(function () { return draw(rec.box, rec.chart, rec.params, rec.fixedH); })
+        .then(function (v) { rec.view = v; }).catch(function () {});
     });
   }
   if (window.matchMedia) {

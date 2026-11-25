@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Compare Story Versions</title>
+<link rel="icon" href="data:,">
+<style>
+/* Layout: a slim control bar, then two versions of the story side by side.
+   On narrow screens one version shows at a time, with a switch. */
+:root {
+  --bg: #ffffff; --bar: #f4f3ef; --ink: #0b0b0b; --ink-2: #52514e;
+  --rule: #d6d4cc; --accent: #d9541e; --on-accent: #ffffff;
+  --font: "Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111110; --bar: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7;
+    --rule: #383835; --accent: #e0602a; --on-accent: #ffffff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111110; --bar: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7;
+  --rule: #383835; --accent: #e0602a; --on-accent: #ffffff;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font); font-size: 14px;
+  display: flex; flex-direction: column;
+}
+.bar {
+  flex: none; background: var(--bar); border-bottom: 1px solid var(--rule);
+  padding-block: 10px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px;
+}
+.bar h1 { font-size: 15px; font-weight: 700; margin: 0; }
+.bar .hint { color: var(--ink-2); font-size: 12.5px; margin: 0; flex: 1 1 16rem; min-width: 0; }
+.pick { display: flex; align-items: center; gap: 6px; }
+.pick label { color: var(--ink-2); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+select, button {
+  font: inherit; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--rule); border-radius: 4px; padding: 5px 8px; max-width: 100%;
+}
+button { cursor: pointer; }
+select:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.switch { display: none; }
+.switch button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.panes { flex: 1 1 auto; min-height: 0; display: flex; }
+.pane { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
+.pane + .pane { border-left: 1px solid var(--rule); }
+.pane-head {
+  flex: none; display: flex; justify-content: space-between; gap: 8px;
+  padding: 5px 12px; font-size: 12.5px; color: var(--ink-2); border-bottom: 1px solid var(--rule);
+}
+.pane-head strong { color: var(--ink); }
+.pane-head a { color: var(--ink-2); }
+iframe { flex: 1 1 auto; width: 100%; border: 0; background: var(--bg); }
+@media (max-width: 899px) {
+  .switch { display: flex; gap: 6px; }
+  .pane { display: none; }
+  .pane.is-shown { display: flex; }
+  .pane + .pane { border-left: 0; }
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <h1>Compare versions</h1>
+  <div class="pick"><label for="pick-a">Left</label><select id="pick-a"></select></div>
+  <div class="pick"><label for="pick-b">Right</label><select id="pick-b"></select></div>
+  <div class="switch" role="group" aria-label="Version shown">
+    <button id="show-a" type="button" aria-pressed="true">Left</button>
+    <button id="show-b" type="button" aria-pressed="false">Right</button>
+  </div>
+  <p class="hint">Scrolling one side moves the other to the same part of the story. Each side is half the window wide, so wide screens show the narrow layout; use "Open" to see a version at full width. What changed and why is in AI_LOG.md.</p>
+</div>
+<div class="panes">
+  <section class="pane is-shown" id="pane-a">
+    <div class="pane-head"><strong id="name-a"></strong><a id="open-a" target="_blank" rel="noopener">Open</a></div>
+    <iframe id="frame-a" title="Left version"></iframe>
+  </section>
+  <section class="pane" id="pane-b">
+    <div class="pane-head"><strong id="name-b"></strong><a id="open-b" target="_blank" rel="noopener">Open</a></div>
+    <iframe id="frame-b" title="Right version"></iframe>
+  </section>
+</div>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var sides = {
+    a: { pick: $("pick-a"), frame: $("frame-a"), name: $("name-a"), open: $("open-a"), pane: $("pane-a"), quietUntil: 0 },
+    b: { pick: $("pick-b"), frame: $("frame-b"), name: $("name-b"), open: $("open-b"), pane: $("pane-b"), quietUntil: 0 }
+  };
+  var versions = [];
+
+  function load(side, id) {
+    var v = versions.filter(function (x) { return x.id === id; })[0] || versions[0];
+    var s = sides[side];
+    s.pick.value = v.id;
+    s.name.textContent = v.label;
+    s.open.href = "versions/" + v.id + "/";
+    s.frame.src = "versions/" + v.id + "/index.html";
+  }
+
+  // Landmarks that exist in every version: headline, section headings, steps, charts, sources.
+  function landmarks(win) {
+    var doc = win.document, out = [{ key: "top", y: 0 }], count = {};
+    var els = doc.querySelectorAll(".hero, .prose h2, .step, .figure, .sources");
+    Array.prototype.forEach.call(els, function (e) {
+      var kind = e.classList.contains("hero") ? "hero" : e.classList.contains("step") ? "step" :
+                 e.classList.contains("figure") ? "figure" : e.classList.contains("sources") ? "sources" : "h2";
+      count[kind] = (count[kind] || 0) + 1;
+      out.push({ key: kind + count[kind], y: e.getBoundingClientRect().top + win.scrollY });
+    });
+    out.push({ key: "end", y: Math.max(1, doc.documentElement.scrollHeight - win.innerHeight) });
+    return out;
+  }
+
+  // Describe where a window is in the story: between which two landmarks, and how far along.
+  function locate(win) {
+    var L = landmarks(win), y = win.scrollY, i = 0;
+    while (i < L.length - 2 && L[i + 1].y <= y) i++;
+    var p = L[i], q = L[i + 1] || p, span = q.y - p.y;
+    return { from: p.key, to: q.key, t: span > 0 ? Math.min(1, Math.max(0, (y - p.y) / span)) : 0, frac: y / L[L.length - 1].y };
+  }
+  // Scroll a window to the same place in its own version of the story.
+  function goTo(win, loc) {
+    var L = landmarks(win), byKey = {};
+    L.forEach(function (m) { byKey[m.key] = m.y; });
+    var y = (loc.from in byKey && loc.to in byKey)
+      ? byKey[loc.from] + loc.t * (byKey[loc.to] - byKey[loc.from])
+      : loc.frac * L[L.length - 1].y;               // the versions differ too much: fall back to a fraction
+    win.scrollTo(0, y);
+  }
+
+  function link(side, other) {
+    var s = sides[side], o = sides[other];
+    s.frame.addEventListener("load", function () {
+      var win = s.frame.contentWindow;
+      win.addEventListener("scroll", function () {
+        if (Date.now() < s.quietUntil) return;         // this scroll was caused by the other side
+        var ow = o.frame.contentWindow;
+        if (!ow || !ow.document || ow.document.readyState !== "complete") return;
+        try {
+          if (!o.pane.offsetParent) return;           // hidden on a narrow screen; synced when shown
+          o.quietUntil = Date.now() + 120;
+          goTo(ow, locate(win));
+        } catch (e) { /* the other side is still loading */ }
+      }, { passive: true });
+    });
+  }
+
+  function show(side) {
+    var other = side === "a" ? "b" : "a", loc = null;
+    try { if (sides[other].pane.offsetParent) loc = locate(sides[other].frame.contentWindow); } catch (e) {}
+    if (loc) setTimeout(function () {                 // let the newly shown side lay itself out first
+      try { sides[side].quietUntil = Date.now() + 300; goTo(sides[side].frame.contentWindow, loc); } catch (e) {}
+    }, 500);
+    ["a", "b"].forEach(function (k) {
+      sides[k].pane.classList.toggle("is-shown", k === side);
+      $("show-" + k).setAttribute("aria-pressed", k === side ? "true" : "false");
+    });
+  }
+
+  fetch("versions/versions.json", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(function (list) {
+    versions = list;
+    ["a", "b"].forEach(function (side) {
+      list.forEach(function (v) {
+        var o = document.createElement("option"); o.value = v.id; o.textContent = v.label; sides[side].pick.appendChild(o);
+      });
+      sides[side].pick.addEventListener("change", function () { load(side, sides[side].pick.value); });
+      $("show-" + side).addEventListener("click", function () { show(side); });
+    });
+    link("a", "b"); link("b", "a");
+    load("a", list[Math.max(0, list.length - 2)].id);   // the two newest versions
+    load("b", list[list.length - 1].id);
+  }).catch(function () {
+    document.querySelector(".hint").textContent = "Could not read versions/versions.json. Open this page through a web server, not as a file.";
+  });
+})();
+</script>
+</body>
+</html>

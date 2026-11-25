@@ -9,7 +9,7 @@
   {
    "name": "mode",
    "value": 2,
-   "description": "0 = show the analyzed area in gray; 1 = gain or loss; 2 = size of the net benefit; 3 = highlight the best tenth"
+   "description": "0 = show the study area (land at risk of wildfire) in gray; 1 = gain or loss; 2 = size of the net benefit; 3 = highlight the best tenth"
   },
   {
    "name": "split_lat",

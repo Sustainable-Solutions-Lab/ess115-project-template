@@ -14,6 +14,8 @@ This is the home of one class research project. It holds everything about the pr
 
 Each folder has a short README that says what belongs in it.
 
+**Starting your own project?** Delete `versions/`, `compare.html` and `log-snapshots/`, and replace `AI_LOG.md` with a copy of `AI_LOG_TEMPLATE.md`. Those files record how the example story was revised (open `compare.html` to see two versions side by side) and are not part of your project.
+
 The repository starts with a complete example: *The best places to fight fire before it starts*, a story about where treating wildfire fuels pays off in California, with its data, charts and methods note. Read it to see what a finished project looks like, then replace it with your own.
 
 ---
@@ -76,8 +78,18 @@ title: Your headline
 dek: One or two sentences that say what you found.
 byline: By **Your Names**
 date: March 2027
+hero: images/hero.jpg
+hero_alt: What the photo shows, for readers who cannot see it
+hero_credit: Where and when it was taken. Photo: who took it, and the license
+hero_focus: 50% 35%
 ---
 ```
+
+The four `hero` lines put a photo behind the headline. They are optional; leave them out for a plain headline.
+
+- Put the photo in `images/`. Resize it first to about 2,000 pixels wide and under 500 KB, so the page loads quickly on a phone.
+- **Use only photos you have the right to publish**, such as your own, or ones with a Creative Commons or public-domain license (Wikimedia Commons, Unsplash, NASA and NOAA are good places to look). Always write the credit. A photo you found in a search engine is not yours to use.
+- `hero_focus` says which part of the photo to keep in view when it is cropped to fit the screen: across, then down. `50% 35%` means the middle, a third of the way down.
 
 ### Paragraphs and headings
 
@@ -112,7 +124,8 @@ Now keep only the best tenth.
 - `chart:` is the name of a file in `4-analysis/charts/`, without `.json`.
 - Each `::step` starts a new step. Directly under it, list that step's **settings**, one per line. Then leave a blank line and write the text.
 - The settings a chart understands are listed at the top of its file (look for `"params"`). Here `mode: 1` tells the map to color gains and losses. A setting you leave out goes back to its default, so each step describes its whole state.
-- A step can also change the `title`, `subtitle`, `note` or `legend`, or switch to a different `chart`.
+- A step can also change the `title`, `subtitle`, `note` or `legend`, or switch to a different `chart`. Make the title true of what the reader can see at that step: if a step shows only the study area, do not title it with the result.
+- The chart never moves when a step changes it. The page sets aside room for the longest title and legend of any step in the section, and gives the chart one size for the whole section.
 - `legend:` makes the color key above the chart. Each entry is a color name from the design system, an equals sign, and a label. Separate entries with `|`.
 
 Good steps are short: one idea, two or three sentences, and a chart that shows exactly that idea.
@@ -176,7 +189,9 @@ The [Vega-Lite online editor](https://vega.github.io/editor/) is a quick place t
 "params": [ { "name": "hl_year", "value": 0, "description": "Year to highlight (0 = none)" } ]
 ```
 
-Then use it wherever Vega-Lite takes an expression, such as a color (`datum.year == hl_year ? 'token:accent' : 'token:context'`) or a filter (`{"filter": "datum.year <= hl_year"}`). The example map shows four uses: switching what the colors mean, adding a line, adding labels, and zooming.
+Then use it wherever Vega-Lite takes an expression, such as a color (`datum.year == hl_year ? 'token:accent' : 'token:context'`) or a filter (`{"filter": "datum.year <= hl_year"}`). The example map shows four uses: switching what the colors mean, adding a line, adding labels, and zooming. Keep the axes and the size of the plot the same in every step (set the axis range yourself, as the examples do), so that only the thing you are pointing at changes.
+
+**Tooltips.** Add a `tooltip` to a chart and readers can hover over a mark, or tap it on a phone, to see its value. Say so in the chart's `note` only after you have tried it on your own phone.
 
 **Maps.** `treatment-map.json` draws a map from a CSV of grid cells (longitude, latitude, value) and a CSV outline. To map your own gridded data, copy it and point it at your files. Keep map data under about 15,000 rows so it stays fast on a phone.
 
@@ -200,7 +215,7 @@ AI assistants are good at editing these files, and you are welcome to use them. 
 
 ## For instructors and anyone hosting a story elsewhere
 
-The story is plain static files with relative paths only, so a finished story works from any folder on any web server (for example `https://example.org/teaching/2027/smoke-days/`). Copy `index.html`, `story.md`, `css/`, `js/` and `4-analysis/data/` and `4-analysis/charts/`. The folder address must end with a slash. Fonts and the chart library load from public CDNs, so the page needs an internet connection.
+The story is plain static files with relative paths only, so a finished story works from any folder on any web server (for example `https://example.org/teaching/2027/smoke-days/`). Copy `index.html`, `story.md`, `css/`, `js/`, `images/`, `4-analysis/data/` and `4-analysis/charts/`. The folder address must end with a slash. Fonts and the chart library load from public CDNs, so the page needs an internet connection.
 
 ## Credits
 

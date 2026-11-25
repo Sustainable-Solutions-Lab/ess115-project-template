@@ -4,6 +4,10 @@ title: The best places to fight fire before it starts
 dek: Clearing wildfire fuels pays for itself on 60 percent of California's fire-prone land. But the biggest returns are packed into a tenth of it, mostly in the north, and the reason is smoke.
 byline: By **the EarthSys 115 teaching team**, from research by Jing Cheng and colleagues
 date: Winter 2027
+hero: images/hero.jpg
+hero_alt: The San Francisco–Oakland Bay Bridge under a dark orange sky, with car headlights on at midday
+hero_credit: The Bay Bridge under wildfire smoke, San Francisco, September 9, 2020. Photo: REUTERS/Stephen Lam, via Alamy Stock Photo
+hero_focus: 50% 35%
 ---
 
 <!-- This is the example story. Replace the words, charts and data with your own.
@@ -11,25 +15,28 @@ date: Winter 2027
 
 California spends hundreds of millions of dollars a year thinning forests and setting prescribed burns so that wildfires, when they come, are smaller and less destructive. State and federal agencies plan to treat about 4,000 square kilometers a year. Far more land than that could use it.
 
-So where should the crews go first? A team led by Jing Cheng at Stanford estimated, for every square kilometer of the state that can burn, what treatment would cost and what it would save. Scroll to see what they found.
+So where should the crews go first? A team led by Jing Cheng at Stanford estimated, for every square kilometer of the state that is at risk of burning, what treatment would cost and what it would save. Scroll to see what they found.
 
 :::scrolly
 chart: treatment-map
 title: Net benefit of treating wildfire fuels
 subtitle: First-year benefits minus one-time cost, by 5-km cell
-note: Data: Cheng et al., in review. Hover or tap for values.
+note: Data: Cheng et al., in review. Tap or hover for values.
 
 ::step
 mode: 0
-legend: context = Land included in the study
+title: Where wildfire can burn
+subtitle: Land with some chance of burning, in 5-km cells
+note: Data: Cheng et al., in review.
+legend: context = Land at risk of wildfire
 
-The study covers about **287,000 square kilometers**, roughly two-thirds of California. Blank areas, including most of the Central Valley and parts of the southeastern desert, are not in the data.
+The study covers every part of California with some chance of burning: about **287,000 square kilometers**, roughly two-thirds of the state. The Central Valley and the southeastern desert are blank because they are not at risk of wildfire.
 
 ::step
 mode: 1
 legend: pos = Benefits exceed costs | neg = Costs exceed benefits
 
-For each place, the researchers compared the cost of the cheapest treatment with what it would save in its first year: buildings not destroyed, and smoke not breathed. Benefits come out ahead on ==pos:60 percent== of the land. On the other ==neg:40 percent==, treatment costs more than it returns.
+In each location, the researchers compared the cost of the cheapest treatment with what it would save in its first year: buildings not destroyed, and smoke not breathed. Benefits come out ahead on ==pos:60 percent== of the land. On the other ==neg:40 percent==, treatment costs more than it returns.
 
 ::step
 mode: 2

@@ -14,7 +14,7 @@ Where in California does treating wildfire fuels return the most benefit relativ
 
 | Dataset | What it is | Source | Where it lives |
 |---|---|---|---|
-| Net-benefit grid | Net benefit of fuel treatment, in thousands of dollars per km², on a 0.01-degree grid (about 1 km). First-year benefits (avoided building loss and avoided smoke-related illness and death) minus the one-time cost of the lowest-cost treatment, under the current climate. 292,879 cells have a value. | Cheng et al., *Prioritizing wildfire fuel management in California*, EarthArXiv preprint, [doi:10.31223/x5j15m](https://eartharxiv.org/repository/view/9858/). The grid is the one behind the lab's [Firefuels map](https://sustainablesolutions.stanford.edu/tools/firefuels). Obtained from the authors, November 2026. | Not in this repository (ask the authors). Our summaries of it are in `4-analysis/data/`. |
+| Net-benefit grid | Net benefit of fuel treatment, in thousands of dollars per km², on a 0.01-degree grid (about 1 km). First-year benefits (avoided building loss and avoided smoke-related illness and death) minus the one-time cost of the lowest-cost treatment, under the current climate. The grid covers the land where the modeled probability of burning is above zero: 292,879 cells. The Central Valley and the low desert fall outside it because they are not at risk of wildfire, not because data are missing. | Cheng et al., *Prioritizing wildfire fuel management in California*, EarthArXiv preprint, [doi:10.31223/x5j15m](https://eartharxiv.org/repository/view/9858/). The grid is the one behind the lab's [Firefuels map](https://sustainablesolutions.stanford.edu/tools/firefuels). Obtained from the authors, November 2026. | Not in this repository (ask the authors). Our summaries of it are in `4-analysis/data/`. |
 | California outline | State boundary | U.S. Census Bureau cartographic boundary files, 1:10,000,000, through the `us-atlas` package, version 3.0.1 | `4-analysis/data/california_outline.csv` |
 | City locations | Six cities, for orientation only | Standard published coordinates | `4-analysis/data/places.csv` |
 
@@ -24,7 +24,7 @@ The preprint is in review and has not yet been peer reviewed. Its numbers may ch
 
 All calculations are in `4-analysis/code/aggregate_net_benefit.py`. Every number we computed is listed in `4-analysis/data/summary_stats.csv`.
 
-1. **Area.** Grid cells are equal in degrees, not in area, so we gave each cell an area of 1.2392 km² × cos(latitude). All shares and averages are weighted by area. The cells with data add up to 287,003 km², which is 68 percent of California's 423,970 km².
+1. **Area.** Grid cells are equal in degrees, not in area, so we gave each cell an area of 1.2392 km² × cos(latitude). All shares and averages are weighted by area. The cells in the study area add up to 287,003 km², which is 68 percent of California's 423,970 km².
 2. **Gain or loss.** A cell counts as a gain when its net benefit is above zero. That is 60.4 percent of the area.
 3. **Best tenth.** We sorted cells from highest to lowest net benefit and took cells until they added up to 10 percent of the area (28,700 km²). The lowest value in that set is $197,600 per km² and the area-weighted mean is $260,300. We repeated this for each tenth to make the bar chart.
 4. **Totals.** For any set of cells, the total net benefit is the sum of net benefit × area. The best tenth totals $7.47 billion. All cells with a gain total $18.91 billion, so the best tenth holds 39.5 percent of it. The worst tenth totals a loss of $3.92 billion.
@@ -38,7 +38,7 @@ All calculations are in `4-analysis/code/aggregate_net_benefit.py`. Every number
 
 - We took the grid as given. We did not rerun or check the authors' cost, fire, smoke or health models.
 - "Net benefit" compares one year of benefits with the full one-time cost of treatment, as the authors define it.
-- We treated every cell with a value as land that could be treated. We did not remove places where treatment is not allowed or not practical.
+- We treated every cell in the study area (every cell with a probability of burning above zero) as land that could be treated. We did not remove places where treatment is not allowed or not practical.
 - The 38°N line is our choice. It is a round number near San Francisco, picked before we looked at the split.
 
 ## 5. Uncertainties and limits

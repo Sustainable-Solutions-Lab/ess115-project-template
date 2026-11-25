@@ -1,0 +1,667 @@
+{
+ "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+ "description": "Map of the net benefit of wildfire fuel treatment in California. Each square is a 0.05-degree cell (about 5 km), the average of up to 25 cells of the original 0.01-degree grid. Steps change the settings below.",
+ "usermeta": {
+  "aspect": 1.15,
+  "renderer": "canvas"
+ },
+ "params": [
+  {
+   "name": "mode",
+   "value": 2,
+   "description": "0 = show the study area (land at risk of wildfire) in gray; 1 = gain or loss; 2 = size of the net benefit; 3 = highlight the best tenth"
+  },
+  {
+   "name": "split_lat",
+   "value": 0,
+   "description": "Draw a line at this latitude (0 = no line)"
+  },
+  {
+   "name": "show_places",
+   "value": false,
+   "description": "Label cities"
+  },
+  {
+   "name": "x_min",
+   "value": -124.75,
+   "description": "West edge of the map (longitude)"
+  },
+  {
+   "name": "x_max",
+   "value": -113.85,
+   "description": "East edge"
+  },
+  {
+   "name": "y_min",
+   "value": 32.3,
+   "description": "South edge (latitude)"
+  },
+  {
+   "name": "y_max",
+   "value": 42.25,
+   "description": "North edge"
+  }
+ ],
+ "layer": [
+  {
+   "data": {
+    "url": "4-analysis/data/net_benefit_grid_0.05deg.csv",
+    "format": {
+     "type": "csv",
+     "parse": {
+      "lon": "number",
+      "lat": "number",
+      "net_k_per_km2": "number",
+      "top10_share": "number"
+     }
+    }
+   },
+   "transform": [
+    {
+     "calculate": "datum.net_k_per_km2",
+     "as": "net"
+    },
+    {
+     "calculate": "datum.top10_share",
+     "as": "top10"
+    },
+    {
+     "calculate": "datum.lon - 0.0255",
+     "as": "x0"
+    },
+    {
+     "calculate": "datum.lon + 0.0255",
+     "as": "x1"
+    },
+    {
+     "calculate": "datum.lat - 0.0255",
+     "as": "y0"
+    },
+    {
+     "calculate": "datum.lat + 0.0255",
+     "as": "y1"
+    },
+    {
+     "calculate": "mode == 0 ? 'token:context' : mode == 1 ? (datum.net > 0 ? 'token:pos' : 'token:neg') : mode == 3 ? (datum.top10 >= 0.4 ? 'token:pos-high' : 'token:context') : datum.net < -100 ? 'token:neg-high' : datum.net < 0 ? 'token:neg-low' : datum.net < 100 ? 'token:pos-low' : datum.net < 200 ? 'token:pos-mid' : 'token:pos-high'",
+     "as": "fill"
+    },
+    {
+     "calculate": "(datum.net > 0 ? '+' : '−') + '$' + format(abs(datum.net) * 1000, ',.0f') + ' per km²'",
+     "as": "tip"
+    }
+   ],
+   "mark": {
+    "type": "rect",
+    "clip": true
+   },
+   "encoding": {
+    "x": {
+     "field": "x0",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[x_min, x_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "x2": {
+     "field": "x1"
+    },
+    "y": {
+     "field": "y0",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[y_min, y_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "y2": {
+     "field": "y1"
+    },
+    "color": {
+     "field": "fill",
+     "type": "nominal",
+     "scale": null,
+     "legend": null
+    },
+    "tooltip": [
+     {
+      "field": "tip",
+      "type": "nominal",
+      "title": "Net benefit"
+     }
+    ]
+   }
+  },
+  {
+   "data": {
+    "url": "4-analysis/data/california_outline.csv",
+    "format": {
+     "type": "csv",
+     "parse": {
+      "lon": "number",
+      "lat": "number",
+      "order": "number"
+     }
+    }
+   },
+   "mark": {
+    "type": "line",
+    "clip": true,
+    "strokeWidth": 1,
+    "color": "token:muted",
+    "interpolate": "linear"
+   },
+   "encoding": {
+    "x": {
+     "field": "lon",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[x_min, x_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "y": {
+     "field": "lat",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[y_min, y_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "order": {
+     "field": "order",
+     "type": "quantitative"
+    },
+    "detail": {
+     "field": "part",
+     "type": "nominal"
+    }
+   }
+  },
+  {
+   "data": {
+    "values": [
+     {
+      "a": -124.75,
+      "b": -113.85
+     }
+    ]
+   },
+   "transform": [
+    {
+     "filter": "split_lat > 0"
+    },
+    {
+     "calculate": "split_lat",
+     "as": "lat"
+    }
+   ],
+   "mark": {
+    "type": "rule",
+    "clip": true,
+    "strokeWidth": 1.5,
+    "strokeDash": [
+     5,
+     3
+    ],
+    "color": "token:ink"
+   },
+   "encoding": {
+    "x": {
+     "field": "a",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[x_min, x_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "x2": {
+     "field": "b"
+    },
+    "y": {
+     "field": "lat",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[y_min, y_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    }
+   }
+  },
+  {
+   "data": {
+    "values": [
+     {
+      "lon": -114.3
+     }
+    ]
+   },
+   "transform": [
+    {
+     "calculate": "split_lat",
+     "as": "lat"
+    },
+    {
+     "calculate": "split_lat + '°N'",
+     "as": "label"
+    },
+    {
+     "filter": "split_lat > 0"
+    }
+   ],
+   "mark": {
+    "type": "text",
+    "clip": true,
+    "fontSize": 12,
+    "fontWeight": 600,
+    "align": "right",
+    "baseline": "bottom",
+    "dy": -5,
+    "color": "token:surface",
+    "stroke": "token:surface",
+    "strokeWidth": 3.5,
+    "strokeJoin": "round"
+   },
+   "encoding": {
+    "x": {
+     "field": "lon",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[x_min, x_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "y": {
+     "field": "lat",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[y_min, y_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "text": {
+     "field": "label"
+    }
+   }
+  },
+  {
+   "data": {
+    "values": [
+     {
+      "lon": -114.3
+     }
+    ]
+   },
+   "transform": [
+    {
+     "calculate": "split_lat",
+     "as": "lat"
+    },
+    {
+     "calculate": "split_lat + '°N'",
+     "as": "label"
+    },
+    {
+     "filter": "split_lat > 0"
+    }
+   ],
+   "mark": {
+    "type": "text",
+    "clip": true,
+    "fontSize": 12,
+    "fontWeight": 600,
+    "align": "right",
+    "baseline": "bottom",
+    "dy": -5,
+    "color": "token:ink",
+    "stroke": null
+   },
+   "encoding": {
+    "x": {
+     "field": "lon",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[x_min, x_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "y": {
+     "field": "lat",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[y_min, y_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "text": {
+     "field": "label"
+    }
+   }
+  },
+  {
+   "data": {
+    "url": "4-analysis/data/places.csv",
+    "format": {
+     "type": "csv",
+     "parse": {
+      "lon": "number",
+      "lat": "number"
+     }
+    }
+   },
+   "transform": [
+    {
+     "filter": "show_places"
+    }
+   ],
+   "mark": {
+    "type": "point",
+    "clip": true,
+    "filled": true,
+    "size": 36,
+    "color": "token:ink",
+    "stroke": "token:surface",
+    "strokeWidth": 1.5,
+    "opacity": 1
+   },
+   "encoding": {
+    "x": {
+     "field": "lon",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[x_min, x_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "y": {
+     "field": "lat",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[y_min, y_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    }
+   }
+  },
+  {
+   "data": {
+    "url": "4-analysis/data/places.csv",
+    "format": {
+     "type": "csv",
+     "parse": {
+      "lon": "number",
+      "lat": "number"
+     }
+    }
+   },
+   "transform": [
+    {
+     "filter": "show_places && datum.align == 'left'"
+    }
+   ],
+   "mark": {
+    "type": "text",
+    "clip": true,
+    "fontSize": 12,
+    "fontWeight": 600,
+    "align": "left",
+    "dx": 7,
+    "baseline": "middle",
+    "color": "token:surface",
+    "stroke": "token:surface",
+    "strokeWidth": 3.5,
+    "strokeJoin": "round"
+   },
+   "encoding": {
+    "x": {
+     "field": "lon",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[x_min, x_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "y": {
+     "field": "lat",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[y_min, y_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "text": {
+     "field": "name"
+    }
+   }
+  },
+  {
+   "data": {
+    "url": "4-analysis/data/places.csv",
+    "format": {
+     "type": "csv",
+     "parse": {
+      "lon": "number",
+      "lat": "number"
+     }
+    }
+   },
+   "transform": [
+    {
+     "filter": "show_places && datum.align == 'left'"
+    }
+   ],
+   "mark": {
+    "type": "text",
+    "clip": true,
+    "fontSize": 12,
+    "fontWeight": 600,
+    "align": "left",
+    "dx": 7,
+    "baseline": "middle",
+    "color": "token:ink",
+    "stroke": null
+   },
+   "encoding": {
+    "x": {
+     "field": "lon",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[x_min, x_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "y": {
+     "field": "lat",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[y_min, y_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "text": {
+     "field": "name"
+    }
+   }
+  },
+  {
+   "data": {
+    "url": "4-analysis/data/places.csv",
+    "format": {
+     "type": "csv",
+     "parse": {
+      "lon": "number",
+      "lat": "number"
+     }
+    }
+   },
+   "transform": [
+    {
+     "filter": "show_places && datum.align == 'right'"
+    }
+   ],
+   "mark": {
+    "type": "text",
+    "clip": true,
+    "fontSize": 12,
+    "fontWeight": 600,
+    "align": "right",
+    "dx": -7,
+    "baseline": "middle",
+    "color": "token:surface",
+    "stroke": "token:surface",
+    "strokeWidth": 3.5,
+    "strokeJoin": "round"
+   },
+   "encoding": {
+    "x": {
+     "field": "lon",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[x_min, x_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "y": {
+     "field": "lat",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[y_min, y_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "text": {
+     "field": "name"
+    }
+   }
+  },
+  {
+   "data": {
+    "url": "4-analysis/data/places.csv",
+    "format": {
+     "type": "csv",
+     "parse": {
+      "lon": "number",
+      "lat": "number"
+     }
+    }
+   },
+   "transform": [
+    {
+     "filter": "show_places && datum.align == 'right'"
+    }
+   ],
+   "mark": {
+    "type": "text",
+    "clip": true,
+    "fontSize": 12,
+    "fontWeight": 600,
+    "align": "right",
+    "dx": -7,
+    "baseline": "middle",
+    "color": "token:ink",
+    "stroke": null
+   },
+   "encoding": {
+    "x": {
+     "field": "lon",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[x_min, x_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "y": {
+     "field": "lat",
+     "type": "quantitative",
+     "scale": {
+      "domain": {
+       "expr": "[y_min, y_max]"
+      },
+      "nice": false,
+      "zero": false
+     },
+     "axis": null
+    },
+    "text": {
+     "field": "name"
+    }
+   }
+  }
+ ]
+}
