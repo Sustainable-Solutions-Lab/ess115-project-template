@@ -1,0 +1,31 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Number of US wildland fires per year, 1983-2025 (NIFC).",
+  "height": 260,
+  "data": {"url": "data/nifc_us_wildfires.csv", "format": {"type": "csv"}},
+  "transform": [
+    {"calculate": "toNumber(datum.year)", "as": "year"},
+    {"calculate": "toNumber(datum.fires) / 1000", "as": "fires_k"},
+    {"calculate": "datum.year - 0.38", "as": "x0"},
+    {"calculate": "datum.year + 0.38", "as": "x1"}
+  ],
+  "layer": [
+    {
+      "mark": {"type": "rect", "cornerRadiusTopLeft": 2, "cornerRadiusTopRight": 2},
+      "encoding": {
+        "x": {"field": "x0", "type": "quantitative", "title": null,
+              "scale": {"domain": [1982.4, 2025.6], "nice": false, "zero": false},
+              "axis": {"format": "d", "tickMinStep": 1, "labelOverlap": true, "tickCount": 8}},
+        "x2": {"field": "x1"},
+        "y": {"field": "fires_k", "type": "quantitative", "title": null,
+              "axis": {"tickCount": 5, "labelExpr": "datum.value + 'k'"}},
+        "y2": {"datum": 0},
+        "color": {"condition": {"test": "datum.year < 1985", "value": "token:context"}, "value": "token:accent-2"},
+        "tooltip": [
+          {"field": "year", "type": "ordinal", "title": "Year"},
+          {"field": "fires", "type": "quantitative", "title": "Fires", "format": ","}
+        ]
+      }
+    }
+  ]
+}

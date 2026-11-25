@@ -1,0 +1,53 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Average size of a US wildland fire (acres burned / number of fires), 1985-2025 (NIFC). 1983-1984 are left out because their fire counts look incomplete.",
+  "height": 340,
+  "params": [
+    {"name": "show_trend", "value": false, "description": "Draw a 10-year rolling average"},
+    {"name": "note_year", "value": 0, "description": "Year to label (0 = none)"}
+  ],
+  "data": {"url": "data/nifc_us_wildfires.csv", "format": {"type": "csv"}},
+  "transform": [
+    {"calculate": "toNumber(datum.year)", "as": "year"},
+    {"filter": "datum.year >= 1985"},
+    {"calculate": "toNumber(datum.acres) / toNumber(datum.fires)", "as": "size"},
+    {"window": [{"op": "mean", "field": "size", "as": "rolling"}], "frame": [-9, 0], "sort": [{"field": "year"}]},
+    {"window": [{"op": "count", "as": "n"}], "frame": [-9, 0], "sort": [{"field": "year"}]}
+  ],
+  "encoding": {
+    "x": {"field": "year", "type": "quantitative", "title": null,
+          "scale": {"domain": [1984.5, 2025.5], "nice": false, "zero": false},
+          "axis": {"format": "d", "tickMinStep": 1, "labelOverlap": true, "tickCount": 8}}
+  },
+  "layer": [
+    {
+      "mark": {"type": "point", "filled": true, "size": 64, "opacity": 0.9},
+      "encoding": {
+        "y": {"field": "size", "type": "quantitative", "title": null, "scale": {"domain": [0, 180]},
+              "axis": {"tickCount": 6, "labelExpr": "datum.value + ' ac'"}},
+        "color": {"value": "token:accent"},
+        "tooltip": [
+          {"field": "year", "type": "ordinal", "title": "Year"},
+          {"field": "size", "type": "quantitative", "title": "Acres per fire", "format": ".0f"}
+        ]
+      }
+    },
+    {
+      "transform": [{"filter": "show_trend && datum.n == 10"}],
+      "mark": {"type": "line", "strokeWidth": 2.5, "color": "token:ink"},
+      "encoding": {"y": {"field": "rolling", "type": "quantitative"}}
+    },
+    {
+      "transform": [{"filter": "show_trend && datum.year == 2025"},
+                    {"calculate": "'10-year average'", "as": "label"}],
+      "mark": {"type": "text", "align": "right", "dy": -12, "fontWeight": 600, "color": "token:ink"},
+      "encoding": {"y": {"field": "rolling", "type": "quantitative"}, "text": {"field": "label"}}
+    },
+    {
+      "transform": [{"filter": "datum.year == note_year"},
+                    {"calculate": "datum.year + ': ' + format(datum.size, '.0f') + ' acres per fire'", "as": "label"}],
+      "mark": {"type": "text", "align": "right", "dx": -8, "fontWeight": 600, "color": "token:ink"},
+      "encoding": {"y": {"field": "size", "type": "quantitative"}, "text": {"field": "label"}}
+    }
+  ]
+}

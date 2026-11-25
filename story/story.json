@@ -1,0 +1,107 @@
+{
+  "meta": {
+    "kicker": "EarthSys 115 · Example story",
+    "title": "Fewer fires, more acres",
+    "dek": "The United States does not have more wildfires than it did in the 1990s. It has bigger ones, and the area burned in a typical year has more than doubled.",
+    "byline": "By **The Teaching Team**, EarthSys 115",
+    "date": "Winter 2027"
+  },
+  "blocks": [
+    {
+      "type": "text",
+      "body": [
+        "Every year since 1983, the National Interagency Fire Center has added up the wildland fires reported by federal, state and local agencies, and the acres they burned. Forty-three years of those totals are enough to ask a simple question: is the fire problem getting worse, and if so, how?",
+        "Scroll down to walk through the numbers."
+      ]
+    },
+    {
+      "type": "scrolly",
+      "chart": "acres-by-year",
+      "title": "Acres burned by US wildland fires",
+      "subtitle": "Millions of acres per year, 1983–2025",
+      "note": "Source: National Interagency Fire Center",
+      "steps": [
+        {
+          "text": "Each bar is one year. In 2025, fires burned about **5.1 million acres**.",
+          "params": {}
+        },
+        {
+          "text": "In the ==1980s and 1990s==, a typical year burned about **3 million acres**. Only three of those 17 years passed 5 million.",
+          "params": {"hl_start": 1983, "hl_end": 1999, "show_means": 1}
+        },
+        {
+          "text": "Since ==2000==, the average has been about **6.9 million acres** a year, more than twice the earlier level.",
+          "params": {"hl_start": 2000, "hl_end": 2025, "show_means": 2}
+        },
+        {
+          "text": "The record is ==2015==, at **10.1 million acres**. The years 2017 and 2020 came within 1 percent of it.",
+          "params": {"hl_start": 2015, "hl_end": 2015, "note_year": 2015}
+        },
+        {
+          "text": "Zoom in on the last decade and three of the 11 years top **10 million acres**. Before 2000, no year reached even 7 million.",
+          "params": {"hl_start": 2015, "hl_end": 2025, "x_min": 2015, "x_max": 2025, "note_year": 2020},
+          "subtitle": "Millions of acres per year, 2015–2025"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Is it because there are more fires?",
+      "body": [
+        "A natural guess is that more burned area means more fires. The count says otherwise. From 1985 to 1999, agencies reported about **76,500 fires** a year. Since 2000 the average is about **69,700**, and over the last ten years it is about **63,400**."
+      ]
+    },
+    {
+      "type": "chart",
+      "chart": "fires-by-year",
+      "title": "Number of US wildland fires",
+      "subtitle": "Thousands of fires per year, 1983–2025",
+      "note": "Source: National Interagency Fire Center. The 1983 and 1984 counts (gray) are far below every later year and probably reflect incomplete reporting.",
+      "caption": "The number of fires has drifted down since the mid-2000s even as the area burned has climbed.",
+      "table": "data/nifc_us_wildfires.csv"
+    },
+    {
+      "type": "scrolly",
+      "chart": "acres-per-fire",
+      "title": "Average size of a US wildland fire",
+      "subtitle": "Acres burned divided by number of fires, 1985–2025",
+      "note": "Source: National Interagency Fire Center. 1983–1984 left out (see above).",
+      "steps": [
+        {
+          "text": "Divide the acres by the number of fires and you get the size of an average fire. Each dot is one year.",
+          "params": {}
+        },
+        {
+          "text": "Averaged over ten years, a fire burned about **42 acres** in 1985–1994 and about **112 acres** in 2016–2025. The typical fire is now more than ==2.5 times bigger==.",
+          "params": {"show_trend": true}
+        },
+        {
+          "text": "The largest average on record is ==2020==, the year of California's August Complex, the state's first fire to burn more than a million acres. **Why** fires are getting bigger (heat, drought, fuels, where people build) is the question a project could take on next.",
+          "params": {"show_trend": true, "note_year": 2020}
+        }
+      ]
+    },
+    {
+      "type": "sources",
+      "sections": [
+        {
+          "heading": "Data",
+          "items": [
+            "National Interagency Coordination Center, [Total Wildland Fires and Acres (1983–2025)](https://www.nifc.gov/fire-information/statistics/wildfires), National Interagency Fire Center. Downloaded November 24, 2026, and saved as `data/nifc_us_wildfires.csv`."
+          ]
+        },
+        {
+          "heading": "Methods",
+          "body": [
+            "Averages are simple means of the annual totals over the years named. Average fire size is acres divided by fires for each year; the 10-year line is a trailing mean of those yearly values. 1983 and 1984 are left out of the fire counts and fire sizes because their counts look incomplete. NIFC notes that the 2004 totals leave out North Carolina state lands. The 2025 total is the figure NIFC posted when the data were downloaded and may still be revised.",
+            "These are national totals. They do not say where fires burned, what kind of land burned, or how severe the fires were."
+          ]
+        },
+        {
+          "heading": "Credits",
+          "body": ["Written by the EarthSys 115 teaching team as an example. Replace this section with your group's names and the groups that worked on your project before you."]
+        }
+      ]
+    }
+  ]
+}
