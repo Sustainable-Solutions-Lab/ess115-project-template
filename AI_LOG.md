@@ -19,3 +19,17 @@ Copy the block below for each new entry, newest at the top.
 **What we kept, changed or threw out, and why:**
 
 ---
+
+### 2026-11-24 · Phase 4 and 5 · who: teaching team (example entry)
+
+**Tool:** Claude (Anthropic)
+
+**What we asked:** Write a script that reads the 0.01-degree net-benefit grid and reports the share of area with a gain, the best tenth by area, and the split north and south of 38°N. Then draft the map spec and the story steps.
+
+**What it gave us:** `4-analysis/code/aggregate_net_benefit.py`, the CSV files in `4-analysis/data/`, two chart specs and a draft of `story.md`.
+
+**How we checked it:** Compared the share with a gain (60 percent) and the area of the best tenth (28,700 km²) with the preprint (60 percent; 28,000 km²). Checked that the ten tenths add up to the total area and that each number in the story matches a row in `summary_stats.csv`. Looked at the map beside the preprint's net-benefit figure. Back-of-envelope: 287,000 km² × $42,000 mean ≈ $12 billion, which matches the sum of the tenths.
+
+**What we kept, changed or threw out, and why:** Kept the grid statistics. Found that our cutoff for the best tenth ($198,000 per km²) differs from the preprint's ($220,000); we kept our number, because it is what the map shows, and recorded the difference in `METHODS.md`. Removed a draft sentence comparing the best tenth with past treatments in dollar terms, because it mixed our number with the preprint's.
+
+---

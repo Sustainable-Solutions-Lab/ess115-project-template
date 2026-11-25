@@ -1,0 +1,20 @@
+stat,value,unit,what_it_is
+analyzed_area_km2,287003,km2,Area of all grid cells with a value
+share_area_positive,0.604,fraction,Area where benefits exceed costs
+top10_area_km2,28700,km2,Area of the best tenth
+top10_threshold_k_per_km2,197.6,$k/km2,Lowest net benefit inside the best tenth
+top10_mean_k_per_km2,260.3,$k/km2,Mean net benefit in the best tenth
+top10_total_net_billion_usd,7.47,$ billion,Net benefit of treating the whole best tenth once
+positive_total_net_billion_usd,18.91,$ billion,Net benefit of treating every area where benefits exceed costs
+negative_total_net_billion_usd,-6.99,$ billion,Net loss from treating every area where costs exceed benefits
+top10_share_of_positive_total,0.395,fraction,Best tenth as a share of all positive net benefit
+mean_net_all_k_per_km2,41.6,$k/km2,Mean net benefit over the whole analyzed area
+min_net_k_per_km2,-399.8,$k/km2,Lowest cell
+max_net_k_per_km2,1104.2,$k/km2,Highest cell
+north_share_of_top10_area,0.859,fraction,Share of the best tenth that lies north of 38 N
+north_share_of_analyzed_area,0.444,fraction,Share of the analyzed area north of 38 N
+north_share_area_positive,0.875,fraction,North of 38 N: area where benefits exceed costs
+south_share_area_positive,0.388,fraction,South of 38 N: area where benefits exceed costs
+north_mean_net_k_per_km2,110.8,$k/km2,Mean net benefit north of 38 N
+south_mean_net_k_per_km2,-13.7,$k/km2,Mean net benefit south of 38 N
+years_to_treat_top10_at_4000_km2_per_year,7.2,years,"Best tenth divided by the planned 4,000 km2 per year"

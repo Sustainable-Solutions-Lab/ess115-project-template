@@ -19,6 +19,19 @@
   --rule:        #d6d4cc;   /* dividers, axis baseline */
   --accent:      #d9541e;   /* the one thing to look at (fire orange) */
   --accent-2:    #2a78d6;   /* a second series when you need one (blue) */
+
+  /* Two-sided scale for maps and charts of gains and losses.
+     Blue = positive, orange = negative, pale = near zero. */
+  --pos:         #3f86dc;
+  --pos-low:     #b7d3f6;
+  --pos-mid:     #5598e7;
+  --pos-high:    #184f95;
+  --neg:         #e08a57;
+  --neg-low:     #f3c9ad;
+  --neg-high:    #b94a16;
+  --pos-text:    #1c5cab;   /* blue and orange dark enough for words */
+  --pos-high-text: #184f95;
+  --neg-text:    #b94a16;
   --step-bg:     rgba(255, 255, 255, 0.94);
   --link:        #1c5cab;
 
@@ -64,6 +77,16 @@
     --rule:     #383835;
     --accent:   #e0602a;
     --accent-2: #3987e5;
+    --pos:      #3987e5;
+    --pos-low:  #1d4372;
+    --pos-mid:  #3987e5;
+    --pos-high: #b7d3f6;
+    --neg:      #c9622e;
+    --neg-low:  #6a3619;
+    --neg-high: #f39a68;
+    --pos-text: #86b6ef;
+    --pos-high-text: #b7d3f6;
+    --neg-text: #f39a68;
     --step-bg:  rgba(26, 26, 25, 0.94);
     --link:     #86b6ef;
     color-scheme: dark;
@@ -80,6 +103,16 @@
   --rule:     #383835;
   --accent:   #e0602a;
   --accent-2: #3987e5;
+    --pos:      #3987e5;
+    --pos-low:  #1d4372;
+    --pos-mid:  #3987e5;
+    --pos-high: #b7d3f6;
+    --neg:      #c9622e;
+    --neg-low:  #6a3619;
+    --neg-high: #f39a68;
+    --pos-text: #86b6ef;
+    --pos-high-text: #b7d3f6;
+    --neg-text: #f39a68;
   --step-bg:  rgba(26, 26, 25, 0.94);
   --link:     #86b6ef;
   color-scheme: dark;
@@ -151,6 +184,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   margin: var(--s-12) auto;
 }
 .prose p { margin: 0 0 var(--s-4); }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; }
+.figure .caption p { margin: 0 0 var(--s-2); }
 .prose h2 {
   font-family: var(--font-display);
   font-size: var(--t-xl);
@@ -173,7 +208,15 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   color: var(--ink-2);
   margin: 0 0 var(--s-3);
 }
-.chart-box { width: 100%; min-width: 0; }
+.legend {
+  list-style: none; margin: 0 0 var(--s-3); padding: 0;
+  display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4);
+  font-family: var(--font-display); font-size: var(--t-xs); color: var(--ink-2);
+}
+.legend li { display: flex; align-items: center; gap: var(--s-2); }
+.legend .swatch { width: 0.8rem; height: 0.8rem; border-radius: 2px; flex: none; }
+.chart-box { width: 100%; min-width: 0; margin-inline: auto; }
+.chart-box canvas { display: block; max-width: 100%; }
 .chart-box .vega-embed { width: 100%; }
 .chart-box .vega-embed summary { display: none; } /* hide the export menu */
 .chart-box svg text { paint-order: stroke; } /* text labels get a halo in the panel color */
@@ -205,6 +248,7 @@ details.data-table summary { cursor: pointer; color: var(--ink-2); }
 .table-scroll { overflow-x: auto; max-height: 22rem; overflow-y: auto; margin-top: var(--s-2); }
 .table-scroll table { border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .table-scroll th, .table-scroll td { padding: var(--s-1) var(--s-4) var(--s-1) 0; text-align: right; border-bottom: 1px solid var(--grid); }
+.table-scroll td.txt { text-align: left; }
 .table-scroll th { position: sticky; top: 0; background: var(--surface); color: var(--ink-2); font-weight: 600; }
 
 /* ---- Scrolly section ---- */
@@ -220,7 +264,7 @@ details.data-table summary { cursor: pointer; color: var(--ink-2); }
   grid-column: 2;
   grid-row: 1;
   position: sticky;
-  top: max(var(--s-8), calc(50vh - 15rem));
+  top: var(--s-4); /* the script centers it once the chart is drawn */
   align-self: start;
   background: var(--surface);
   border-top: 2px solid var(--ink);
@@ -245,7 +289,7 @@ details.data-table summary { cursor: pointer; color: var(--ink-2); }
 .step p:last-child { margin-bottom: 0; }
 .step.is-active { color: var(--ink); border-left-color: var(--accent); }
 
-/* Highlighted words inside step text: write ==like this== in story.json */
+/* Highlighted words inside step text: write ==like this== in story.md */
 mark.hl {
   background: none;
   color: var(--accent);
@@ -298,7 +342,7 @@ mark.hl {
 .sources p, .sources li { margin: 0 0 var(--s-2); }
 .sources ul { padding-left: 1.1rem; margin: 0; }
 
-/* ---- Error box (shown when story.json or a chart has a mistake) ---- */
+/* ---- Error box (shown when story.md or a chart has a mistake) ---- */
 .error {
   max-width: var(--measure);
   margin: var(--s-8) auto;
@@ -310,6 +354,8 @@ mark.hl {
   background: var(--surface);
 }
 .error strong { display: block; margin-bottom: var(--s-1); }
+.chart-box .error { margin: 0; }
+.error p { margin: 0; }
 .error code { font-size: 0.95em; }
 
 @media (prefers-reduced-motion: reduce) {

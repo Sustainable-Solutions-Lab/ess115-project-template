@@ -1,0 +1,191 @@
+{
+ "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+ "description": "Mean net benefit of fuel treatment in each tenth of the analyzed area, ranked from best to worst.",
+ "height": 300,
+ "params": [
+  {
+   "name": "hl",
+   "value": 1,
+   "description": "Tenth to highlight (0 = none)"
+  }
+ ],
+ "data": {
+  "url": "4-analysis/data/net_benefit_deciles.csv",
+  "format": {
+   "type": "csv",
+   "parse": {
+    "decile": "number",
+    "mean_net_k_per_km2": "number",
+    "total_net_billion_usd": "number",
+    "area_km2": "number"
+   }
+  }
+ },
+ "transform": [
+  {
+   "calculate": "datum.mean_net_k_per_km2",
+   "as": "net"
+  },
+  {
+   "calculate": "datum.decile == hl ? 'token:pos-high' : datum.net > 0 ? 'token:pos-mid' : 'token:neg'",
+   "as": "fill"
+  },
+  {
+   "calculate": "(datum.net > 0 ? '+' : '−') + format(abs(datum.net), '.0f')",
+   "as": "label"
+  }
+ ],
+ "layer": [
+  {
+   "mark": {
+    "type": "bar",
+    "width": {
+     "band": 0.78
+    }
+   },
+   "encoding": {
+    "x": {
+     "field": "decile",
+     "type": "ordinal",
+     "title": "Tenths of the study area, from best (1) to worst (10)",
+     "axis": {
+      "labelAngle": 0,
+      "labelOverlap": false,
+      "domain": false,
+      "ticks": false,
+      "labelPadding": 8
+     }
+    },
+    "y": {
+     "field": "net",
+     "type": "quantitative",
+     "title": null,
+     "scale": {
+      "domain": [
+       -170,
+       300
+      ]
+     },
+     "axis": {
+      "tickCount": 6,
+      "labelExpr": "(datum.value < 0 ? '−' : '') + '$' + abs(datum.value) + 'k'"
+     }
+    },
+    "color": {
+     "field": "fill",
+     "type": "nominal",
+     "scale": null,
+     "legend": null
+    },
+    "tooltip": [
+     {
+      "field": "label",
+      "type": "nominal",
+      "title": "Mean net benefit ($k per km²)"
+     },
+     {
+      "field": "total_net_billion_usd",
+      "type": "quantitative",
+      "title": "Total if all treated ($ billion)"
+     },
+     {
+      "field": "area_km2",
+      "type": "quantitative",
+      "title": "Area (km²)",
+      "format": ","
+     }
+    ]
+   }
+  },
+  {
+   "transform": [
+    {
+     "filter": "datum.net > 0"
+    }
+   ],
+   "mark": {
+    "type": "text",
+    "baseline": "bottom",
+    "dy": -4,
+    "fontSize": 11,
+    "fontWeight": 600
+   },
+   "encoding": {
+    "x": {
+     "field": "decile",
+     "type": "ordinal",
+     "title": "Tenths of the study area, from best (1) to worst (10)",
+     "axis": {
+      "labelAngle": 0,
+      "labelOverlap": false,
+      "domain": false,
+      "ticks": false,
+      "labelPadding": 8
+     }
+    },
+    "y": {
+     "field": "net",
+     "type": "quantitative"
+    },
+    "text": {
+     "field": "label"
+    }
+   }
+  },
+  {
+   "transform": [
+    {
+     "filter": "datum.net <= 0"
+    }
+   ],
+   "mark": {
+    "type": "text",
+    "baseline": "top",
+    "dy": 5,
+    "fontSize": 11,
+    "fontWeight": 600
+   },
+   "encoding": {
+    "x": {
+     "field": "decile",
+     "type": "ordinal",
+     "title": "Tenths of the study area, from best (1) to worst (10)",
+     "axis": {
+      "labelAngle": 0,
+      "labelOverlap": false,
+      "domain": false,
+      "ticks": false,
+      "labelPadding": 8
+     }
+    },
+    "y": {
+     "field": "net",
+     "type": "quantitative"
+    },
+    "text": {
+     "field": "label"
+    }
+   }
+  },
+  {
+   "data": {
+    "values": [
+     {
+      "z": 0
+     }
+    ]
+   },
+   "mark": {
+    "type": "rule",
+    "color": "token:ink-2",
+    "strokeWidth": 1
+   },
+   "encoding": {
+    "y": {
+     "field": "z",
+     "type": "quantitative"
+    }
+   }
+  }
+ ]
+}
