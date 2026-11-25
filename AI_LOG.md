@@ -14,6 +14,32 @@ When your group starts its own project, replace this file with a copy of `AI_LOG
 
 ---
 
+### 2026-11-24 · Publishing · who: S. Davis (instructor) · version: v0.2 (no change to the story)
+
+**Kind of change:** process (the repository is made public and the story is published with GitHub Pages)
+
+**Tool:** Claude (Anthropic), in Claude Code
+
+**What was asked:** "Rather than doing this in artifacts, should we enable the git pages so it looks like what the students will make? Or put it on my website?" The AI recommended GitHub Pages, and named two things to settle first: whether the license for the hero photo allows it to be published, and whether the study's lead author agreed to the story being shared. The instructor answered: "License for image is fine for the lower res version, and Jing and I are fine with sharing the fire story."
+
+**What it gave us:** The repository was made public, because the organization's plan only publishes Pages sites from public repositories, and Pages was turned on for the `main` branch. The story is at https://sustainable-solutions-lab.github.io/ess115-project-template/ and the comparison of versions is at https://sustainable-solutions-lab.github.io/ess115-project-template/compare.html.
+
+**How it was checked:**
+
+- By a person: the instructor confirmed the photo license and the agreement of the study's lead author. These were decisions only a person could make; the AI raised them and waited.
+- By the AI, before the repository became public: every file in every past version was listed and scanned for anything that should not be public (manuscript files, raw study data, private file paths). None was found. The repository holds only aggregated data and the script that made it.
+- By the AI, after publishing: the live story and the comparison page were loaded at desktop and phone widths, with no failed requests.
+
+**What we kept, changed or threw out, and why:** Nothing in the story changed. The copy of the photo in the repository is 2,000 pixels wide, cut down from the licensed file.
+
+**Not yet checked:**
+
+- Whether 2,000 pixels wide is what the instructor meant by "the lower res version" of the photo.
+- Tapping for values on a real phone.
+- The open items from v0.1 below (the cutoff for the best tenth, the choice of 38°N, the coarse map).
+
+---
+
 ### 2026-11-24 · Phase 5 · who: S. Davis (instructor) · version: v0.2
 
 **Kind of change:** aesthetic (hero photo, centered charts, charts that hold still) and substantive (why parts of the map are blank, the title of the first map, the claim that readers can tap for values)

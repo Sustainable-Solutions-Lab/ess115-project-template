@@ -18,6 +18,8 @@ Each folder has a short README that says what belongs in it.
 
 The repository starts with a complete example: *The best places to fight fire before it starts*, a story about where treating wildfire fuels pays off in California, with its data, charts and methods note. Read it to see what a finished project looks like, then replace it with your own.
 
+See it live: [the example story](https://sustainable-solutions-lab.github.io/ess115-project-template/) and [how it changed between versions](https://sustainable-solutions-lab.github.io/ess115-project-template/compare.html). The requests behind each change are in `AI_LOG.md`.
+
 ---
 
 ## 1. GitHub in ten minutes
