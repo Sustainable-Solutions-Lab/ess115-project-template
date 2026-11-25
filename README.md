@@ -10,7 +10,7 @@ This is the home of one class research project. It holds everything about the pr
 | 4. Analysis | `4-analysis/` | Code, clean data, and one chart spec per figure |
 | 5. Write-up | `story.md`, `METHODS.md` | A scrolling data story and a two-page methods note |
 | Every handoff | `receipt-memos/` | The receiving group's one-page memo on what it inherited |
-| Every phase | `AI_LOG.md` | What you asked an AI tool, and how you checked the answer |
+| Every phase | `AI_LOG.md` | What you asked an AI tool, and how you checked the answer (start from `AI_LOG_TEMPLATE.md`) |
 
 Each folder has a short README that says what belongs in it.
 
@@ -194,7 +194,7 @@ AI assistants are good at editing these files, and you are welcome to use them. 
 
 1. **Ask for small, specific edits.** For example: "In `4-analysis/charts/smoke-days.json`, color the bar for 2020 with `token:accent`." Or: "Add a step to the first scrolly section of `story.md` that sets `hl_year` to 2018." Paste in the file you want changed. Avoid "make my story better."
 2. **Check every number against your data.** An AI will write a confident sentence with a wrong number in it. Before you commit any text that contains a number, find that number in your CSV or source, or recompute it yourself. A back-of-envelope estimate is a good second check. Then open the page and make sure the chart shows what the sentence says.
-3. **Log it.** Add an entry to `AI_LOG.md` each time: what you asked, what you got, how you checked it, and what you kept. The log is part of your grade, and the next group will read it.
+3. **Log it.** Add an entry to `AI_LOG.md` each time: what you asked, what you got, how you checked it, and what you kept. The log is part of your grade, and the next group will read it. The `AI_LOG.md` that comes with this repository is the teaching team's real log for the example story, including each change the instructor asked for; use it as your model, then replace it with a copy of `AI_LOG_TEMPLATE.md`.
 
 ---
 
