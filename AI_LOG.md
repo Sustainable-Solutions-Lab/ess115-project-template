@@ -5,7 +5,7 @@ This is the real log of how the example story in this repository, *The best plac
 How to read it:
 
 - Entries are newest first. Each one names the version it produced; versions are git tags, so you can see exactly what changed with `git diff v0.1 v0.2` or on GitHub under "Tags".
-- "What was asked" quotes the request as it was made.
+- "What was asked" summarizes the request. (The instructor asked for summaries in place of his exact words, to keep the log short.)
 - "How it was checked" says who or what did the checking. A check run by the AI on its own work is weaker than a check by a person, so the two are kept apart.
 - "Not yet checked" is the most important line. It tells the next reader what they should not yet trust.
 - Pictures of the page at each version are in `log-snapshots/`.
@@ -20,7 +20,7 @@ When your group starts its own project, replace this file with a copy of `AI_LOG
 
 **Tool:** Claude (Anthropic), in Claude Code
 
-**What was asked:** "Rather than doing this in artifacts, should we enable the git pages so it looks like what the students will make? Or put it on my website?" The AI recommended GitHub Pages, and named two things to settle first: whether the license for the hero photo allows it to be published, and whether the study's lead author agreed to the story being shared. The instructor answered: "License for image is fine for the lower res version, and Jing and I are fine with sharing the fire story."
+**What was asked:** Whether to show the example with GitHub Pages, as students will, or on the instructor's website. The AI recommended GitHub Pages and named two things to settle first: whether the license for the hero photo allows it to be published, and whether the study's lead author agreed to the story being shared. The instructor confirmed both.
 
 **What it gave us:** The repository was made public, because the organization's plan only publishes Pages sites from public repositories, and Pages was turned on for the `main` branch. The story is at https://sustainable-solutions-lab.github.io/ess115-project-template/ and the comparison of versions is at https://sustainable-solutions-lab.github.io/ess115-project-template/compare.html.
 
@@ -46,7 +46,7 @@ When your group starts its own project, replace this file with a copy of `AI_LOG
 
 **Tool:** Claude (Anthropic), in Claude Code
 
-**What was asked:** "I'd like to have a hero image at the top, in this case one from my stock of fire photos in Dropbox should work well. The one with the bay bridge in red sky would be good. Figures should be centered on the page and if colors or lines appear on the figure as the user scrolls it ought not to jittery. As it is now the addition of entries in the legend cause the California map to jump around. The title of the first map is confusing because no colors are visible until scrolling, so 'benefits minus one-time cost' is not true. The reason that the Central Valley and desert are excluded is that they are not at risk of wildfire, not a lack of data. Captions all say hover for values, but at least on my phone. I can't seem to get any values to come up when I tap or hover over the map. instead of 'for each place, let's say 'in each location.'"
+**What was asked:** Seven changes after the instructor read v0.1: (1) add a hero photo at the top, the Bay Bridge under a red smoke sky; (2) center the figures on the page; (3) stop the map from jumping when colors, lines or legend entries appear; (4) fix the first map's title, which described net benefits before any were shown; (5) correct the reason the Central Valley and the desert are blank: they are not at risk of wildfire, and no data are missing; (6) fix or remove "hover for values," which did nothing on a phone; (7) change "for each place" to "in each location."
 
 **What it gave us:**
 
@@ -92,11 +92,11 @@ When your group starts its own project, replace this file with a copy of `AI_LOG
 
 **Tool:** Claude (Anthropic), in Claude Code
 
-**What was asked:** "I'd like to set a good example for the students and make a log that shows this current version and the substantive and aesthetic changes I will ask you for going forward as we polish it."
+**What was asked:** Keep a log of the current version and of every substantive and aesthetic change requested from here on, to show students as an example of the log expected from them.
 
 **What it gave us:** This file, rewritten from a single example entry into a full log; `AI_LOG_TEMPLATE.md`, the blank version for students; the tag `v0.1` on the current story; and `log-snapshots/v0.1-top.png`, a picture of the top of the page at this version.
 
-**How it was checked:** By the AI: the quoted requests below were copied from the conversation in which they were made, and the commit hashes were read from `git log`. By a person: not yet.
+**How it was checked:** By the AI: the requests below were taken from the conversation in which they were made, and the commit hashes were read from `git log`. By a person: not yet.
 
 **What we kept, changed or threw out, and why:** The earlier example entry is kept, expanded, as the v0.1 entry below.
 
@@ -110,7 +110,7 @@ When your group starts its own project, replace this file with a copy of `AI_LOG
 
 **Tool:** Claude (Anthropic), in Claude Code
 
-**What was asked:** "Let's update the example scroll-story to be about Jing Cheng's where to treat wildfire fuels analysis (we have a tool started for it). Should be a research output like I'd want them to make. Go ahead and start a git repo for it that will be shared with students and ready to be cloned for their own."
+**What was asked:** Replace the placeholder with a story about Jing Cheng's analysis of where to treat wildfire fuels in California, made to the standard of the research output we want from students, and put it in a repository that students can copy for their own projects.
 
 **What it gave us:** `4-analysis/code/aggregate_net_benefit.py`, which reads the study's 0.01-degree net-benefit grid and writes the CSV files in `4-analysis/data/`; two chart specs (the California map and the bar chart by tenth of land); `story.md`; `METHODS.md`; and the phase folders. The story file format changed from JSON to Markdown, because a stray comma in JSON breaks the whole page.
 
@@ -145,7 +145,7 @@ When your group starts its own project, replace this file with a copy of `AI_LOG
 
 **Tool:** Claude (Anthropic), in Claude Code
 
-**What was asked:** "One idea was to drop the paper requirement and instead have them try 'scrollytelling' with help from AI. My idea was to establish an example codebase and design system in the vein of these," followed by links to three interactive stories from The New York Times (on ventilation in schools, flash floods in Nepal, and the Los Angeles fires).
+**What was asked:** An example codebase and design system for "scrollytelling," in the style of three interactive stories from The New York Times (on ventilation in schools, flash floods in Nepal, and the Los Angeles fires), as a possible replacement for the final paper.
 
 **What it gave us:** The page (`index.html`, `css/`, `js/`): a graphic that stays in view while short text steps scroll past and change it, a type scale, a color palette, and a chart theme. The placeholder story, "Fewer fires, more acres," used the National Interagency Fire Center's annual totals of US wildfires and acres burned, 1983 to 2025.
 
